@@ -1,0 +1,179 @@
+:root {
+    --video-game: 'Silkscreen', cursive;
+  }
+body {
+    font-family: var(--video-game);
+    background-color: #24385b;
+}
+
+/* First Section */
+.title {
+    display: flex;
+    justify-content: center;
+}
+.title img {
+    margin-top: 20px;
+}
+#select-pet {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.subtitle {
+    color: white;
+}
+.cards {
+    display: flex;
+    justify-content: space-between;
+}
+.mokepon-card {
+    color: #f5fad7;
+    background-color: #4a628c;
+    width: 210px;
+    height: 300px;
+    padding: 10px;
+    margin: 10px;
+    box-sizing: border-box;
+    border: 4px solid #ffcd00;
+    border-radius: 25px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.mokepon-card:hover {
+    cursor: pointer;
+    transform: scale(1.1);
+    transition: transform 1s;
+}
+.mokepon-card p {
+    font-size: 30px;
+}
+.mokepon-card img {
+    width: 150px;
+}
+input {
+    display: none;
+}
+input:checked + label {
+    background-color: #ffcd00;
+}
+.select-pet-button {
+    width: 350px;
+    height: 60px;
+    border-radius: 20px;
+    background-color: #356abc;
+    border: 1px solid #ffcd00;
+    color: #ffcd00;
+    font-family: var(--video-game);
+    font-size: 20px;
+    margin-top: 20px;
+    cursor: pointer;
+}
+.select-pet-button:hover {
+    background-color: #24385b;
+}
+
+/* Second Section */
+.button-content {
+    width: 80%;
+    display: flex;
+    justify-content: space-around;
+}
+#select-attack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: white;
+}
+.attack-button  {
+    width: 200px;
+    height: 50px;
+    color: white;
+    font-size: 20px;
+    border: none;
+    font-family: var(--video-game);
+    cursor: pointer;
+}
+#fire-button {
+    background: rgb(255,103,35);
+    background: linear-gradient(90deg, rgba(255,103,35,1) 10%, rgba(255,176,46,1) 90%);
+}
+#fire-button:hover {
+    cursor: pointer;
+    background: rgba(255,176,46);
+    background: linear-gradient(90deg, rgba(255,176,46,1) 10%, rgba(255,103,35,1) 90%);
+}
+#water-button {
+    background: rgb(38,201,252);
+    background: linear-gradient(90deg, rgba(38,201,252,1) 10%, rgba(0,0,255,1) 90%);
+}
+#water-button:hover {
+    cursor: pointer;
+    background: rgb(0,0,255);
+    background: linear-gradient(90deg, rgba(0,0,255,1) 10%, rgba(38,201,252,1) 90%);
+}
+#earth-button {
+    background: rgb(109,69,52);
+    background: linear-gradient(90deg, rgba(109,69,52,1) 10%, rgba(134,215,47,1) 90%);
+}
+#earth-button:hover {
+    cursor: pointer;
+    background: rgb(134,215,47);
+    background: linear-gradient(90deg, rgba(134,215,47,1) 10%, rgba(109,69,52,1) 90%);
+}
+#messages {
+    width: 80%;
+    background-color: #4a628c;
+    padding: 20px;
+    margin-top: 20px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    border-top: 2px solid #ffcd00;
+    border-right:2px solid #ffcd00;
+}
+#button-restart {
+    border-radius: 20px;
+    background-color: #356abc;
+    border: 1px solid #ffcd00;
+    color: #ffcd00;
+    font-family: var(--video-game);
+    width: 350px;
+    height: 60px;
+    font-size: 20px;
+    cursor: pointer;
+}
+#button-restart:hover {
+    background-color: #24385b;
+
+}
+.battle-container {
+    width: 60%;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    text-align: center;
+}
+#img-player-pet, #img-enemy-pet {
+    width: 150px;
+}
+
+/* Media Querys */
+@media (max-width: 360px) {
+    .title img {
+        width: 90%;
+    }
+    .cards {
+        display: block;
+    }
+    .select-pet-button {
+        width: 80%;
+    }
+    .button-content {
+        flex-direction: column;
+        align-items: center;
+    }
+    .attack-button {
+        margin-top: 30px;
+    }
+}
