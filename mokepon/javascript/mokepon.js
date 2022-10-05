@@ -23,23 +23,28 @@ const playerAttackMessage = document.getElementById ('player-attack-message');
 const enemyAttackMessage = document.getElementById ('enemy-attack-message');
 
 // showAttaks ()
-const attacksContainer = document.getElementById ('attaks-container')
+const attacksContainer = document.getElementById ('attacks-container')
 
 let mokepons = []
-let playerAttack
-let enemyAttack
+let playerAttack = []
+let enemyAttack = []
 let mokeponOptions 
 let inputHipodoge
 let inputCapipepo 
 let inputRatigueya 
 let petPlayer
 let mokeponAttacks
+let mokeponEnemyAttacks
 let fireButton 
 let waterButton 
 let earthButton 
 let buttons = []
-let playerLifes = 3
-let enemyLifes = 3
+let indexPlayerAttack 
+let indexEnemyAttack 
+let playerVictories = 0
+let enemyVictories = 0
+// let playerLifes = 3
+// let enemyLifes = 3
 
 class Mokepon {
     constructor (name, image, life) {
@@ -85,7 +90,7 @@ function startGame () {
     
     mokepons.forEach ((mokepon) => {
        mokeponOptions = `
-        <input type="radio" name="pet" id=${mokepon.name}/>
+        <input type="radio" name="pet" id=${mokepon.name} />
         <label class="mokepon-card" for=${mokepon.name}>
             <p>${mokepon.name}</p>
             <img src=${mokepon.image} alt=${mokepon.name}>
@@ -122,21 +127,15 @@ function selectPetPlayer () {
         restartGame ();
     }
 
-    extractAttack (petPlayer)
+    extractAttacks (petPlayer)
     selectPetEnemy ()
 }
 
-function selectPetEnemy () {
-    let randomPetEnemy = randomFunc (0, mokepons.length - 1);
-
-    spanPetEnemy,innerHTML = mokepons [randomPetEnemy].name
-}
-
-function extractAttack (petPlayer) {
+function extractAttacks (petPlayer) {
     let attacks
     for (let i = 0; i < mokepons.length; i++) {
         if (petPlayer === mokepons[i].name) {
-            attacks = mokepons[i].attack
+            attacks = mokepons[i].attacks
         }       
     }
     
@@ -144,88 +143,118 @@ function extractAttack (petPlayer) {
 }
 
 function showAttacks (attacks) {
-    attacks.forEach ((attack) => {
+    attacks.forEach((attack) => {
         mokeponAttacks = `
-        <button id=${attack.id} class="attack-button attackBtn">${attack.name}</button>
+        <button id=${attack.id} class="attack-button attackBtn"> ${attack.name} </button>
         `
-
+        
         attacksContainer.innerHTML += mokeponAttacks
     })
-
+    
     fireButton = document.getElementById ('fire-button')
     waterButton = document.getElementById ('water-button')
     earthButton = document.getElementById ('earth-button')
     buttons = document.querySelectorAll ('.attackBtn')
-
-
-    fireButton.addEventListener ('click', fireAttack)   
-    waterButton.addEventListener ('click', waterAttack)    
-    earthButton.addEventListener ('click', earthAttack)  
 }
 
 function sequenceAttack () {
-    
+    buttons.forEach ((button) => {
+        button.addEventListener ('click', (e) => {
+
+            if (e.target.textContent === ' 🔥 ') {
+                playerAttack.push ('FUEGO')
+                console.log (playerAttack)
+                button.style.background = '#112f58'
+            } else if (e.target.textContent === ' 💧 ') {
+                playerAttack.push ('AGUA')
+                console.log (playerAttack)
+                button.style.background = '#112f58'
+            } else {
+                playerAttack.push ('TIERRA')
+                console.log (playerAttack)
+                button.style.background = '#112f58'
+            }
+
+            randomEnemyAttack ()
+        })
+    })
 }
 
-function fireAttack () {
-    playerAttack = 'FUEGO 🔥'
-    randomEnemyAttack ();
-}
+function selectPetEnemy () {
+    let randomPetEnemy = randomFunc (0, mokepons.length - 1);
 
-function waterAttack () {
-    playerAttack = 'AGUA 💧'
-    randomEnemyAttack ();
-}
-
-function earthAttack () {
-    playerAttack = 'TIERRA 🌱'
-    randomEnemyAttack ();
+    spanPetEnemy.innerHTML = `Mokepon: ${mokepons[randomPetEnemy].name}`
+    mokeponEnemyAttacks = mokepons [randomPetEnemy].attacks
+    sequenceAttack ()
 }
 
 function randomEnemyAttack () {
-    let randomPetEnemy = randomFunc (1, 3);
+    let randomPetEnemy = randomFunc (0, mokeponEnemyAttacks.length - 1);
 
-    if (randomPetEnemy == 1) {
-        enemyAttack = 'FUEGO 🔥';
-    } else if (randomPetEnemy == 2) {
-        enemyAttack = 'AGUA 💧';
+    if (randomPetEnemy == 0 || randomPetEnemy == 1) {
+        enemyAttack.push = 'FUEGO';
+    } else if (randomPetEnemy == 3 || randomPetEnemy == 4) {
+        enemyAttack.push = 'AGUA';
     } else {
-        enemyAttack = 'TIERRA 🌱';
+        enemyAttack.push = 'TIERRA';
     }
 
-    combatResults ();
+    console.log (enemyAttack)
+    startFight ()
+}
+
+function startFight () {
+    if (playerAttack.length === 5) {
+        combatResults ();
+    }
+}
+
+function indexBothOponents (player, enemy) {
+    indexPlayerAttack = playerAttack[player]
+    indexEnemyAttack = enemyAttack[enemy]
 }
 
 function combatResults () {
 
-    if (enemyAttack == playerAttack) {
-        createMessage ('Empate')
-    } else if (playerAttack == 'FUEGO 🔥' && enemyAttack == 'TIERRA 🌱') {
-        createMessage ('Ganaste, Maestro Mokepon');
-        enemyLifes--;
-        spanEnemyLife.innerHTML = `Vidas: ${enemyLifes}`;
-    } else if (playerAttack == 'AGUA 💧' && enemyAttack == 'FUEGO 🔥') {
-        createMessage ('Ganaste, Maestro Mokepon');
-        enemyLifes--;
-        spanEnemyLife.innerHTML = `Vidas: ${enemyLifes}`;
-    } else if (playerAttack == 'TIERRA 🌱' && enemyAttack == 'AGUA 💧') {
-        createMessage ('Ganaste, Maestro Mokepon');
-        enemyLifes--;
-        spanEnemyLife.innerHTML = `Vidas: ${enemyLifes}`;
-    } else {
-        createMessage ('Eres el gran perdedor');
-        playerLifes --;
-        spanPlayerLife.innerHTML = `Vidas: ${playerLifes}`;
+    for (let index = 0; index < playerAttack.length; index++) {
+        if (playerAttack[index] === enemyAttack[index]) {
+            indexBothOponents (index, index)
+            createMessage ('Empate')
+            // playerVictories++
+            // spanEnemyLife.innerHTML = `Victorias: ${enemyLifes}`;
+        } else if (playerAttack[index] == 'FUEGO 🔥' && enemyAttack[index]  == 'TIERRA 🌱') {
+            indexBothOponents (index, index)
+            createMessage ('Ganaste, Maestro Mokepon');
+            playerVictories++
+            spanPlayerLife.innerHTML = `Victorias: ${playerVictories}`;
+        } else if (playerAttack[index] == 'AGUA 💧' && enemyAttack[index]  == 'FUEGO 🔥') {
+            indexBothOponents (index, index)
+            createMessage ('Ganaste, Maestro Mokepon');
+            playerVictories++
+            spanPlayerLife.innerHTML = `Victorias: ${playerVictories}`;
+        } else if (playerAttack[index] == 'TIERRA 🌱' && enemyAttack[index] == 'AGUA 💧')  {
+            indexBothOponents (index, index)
+            createMessage ('Ganaste, Maestro Mokepon');
+            playerVictories++
+            spanPlayerLife.innerHTML = `Victorias: ${playerVictories}`;
+        } else {
+            indexBothOponents (index, index)
+            createMessage ('Perdiste')
+            enemyVictories++
+            spanEnemyLife.innerHTML = `Victorias: ${enemyVictories}`;
+        }
     }
 
-    lifes ();
+    // victories ();
 }
 
-function lifes () {
-    if (enemyLifes == 0) {
-        createFinalMessage ('Felicitaciones, maestro Mokepon, haz ganado.')
-    } else if (playerLifes == 0) {
-        createFinalMessage ('Buhhhh, perdedor!!')
+function victories () {
+    if (playerVictories === enemyVictories) {
+        createFinalMessage ('Esto fue un empate')
+    } else if (playerVictories > enemyVictories) {
+        createFinalMessage ('Ganaste, maestro mokepon!!')
+    } else {
+        createFinalMessage ('Buhhh, eres el gran perdedor')
     }
 }
 
@@ -233,10 +262,10 @@ function createMessage (result) {
     sectionMessage.innerHTML = result;
 
     let newPlayerAttack = document.createElement ('p');
-    newPlayerAttack.innerHTML = playerAttack;
+    newPlayerAttack.innerHTML = indexPlayerAttack;
 
     let newEnemyAttack = document.createElement ('p');
-    newEnemyAttack.innerHTML = enemyAttack;
+    newEnemyAttack.innerHTML = indexEnemyAttack;
 
     // let paragraph = document.createElement ('p');
     // paragraph.innerHTML = `Tu mascota atacó con ${playerAttack}, tu enemigo con ${enemyAttack} - ${result}`;
