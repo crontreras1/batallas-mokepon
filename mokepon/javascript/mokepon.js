@@ -25,6 +25,9 @@ const enemyAttackMessage = document.getElementById ('enemy-attack-message');
 // showAttaks ()
 const attacksContainer = document.getElementById ('attacks-container')
 
+const viewMapSection = document.getElementById ('view-map')
+const mapa = document.getElementById ('mapa')
+
 let mokepons = []
 let playerAttack = []
 let enemyAttack = []
@@ -45,6 +48,8 @@ let playerVictories = 0
 let enemyVictories = 0
 // let playerLifes = 3
 // let enemyLifes = 3
+let canvas = mapa.getContext ('2d')
+let interval
 
 class Mokepon {
     constructor (name, image, life) {
@@ -52,6 +57,14 @@ class Mokepon {
         this.image = image
         this.life = life
         this.attacks = []
+        this.x = 20
+        this.y = 30
+        this.width = 80
+        this.height = 80
+        this.mapaImage = new Image()
+        this.mapaImage.src = image
+        this.speedX = 0
+        this.speedY = 0
     }
 }
 
@@ -86,7 +99,8 @@ ratigueya.attacks.push (
 mokepons.push (hipodoge, capipepo, ratigueya)
 
 function startGame () {   
-    selectAttackPlayer.style.display = 'none'; 
+    selectAttackPlayer.style.display = 'none'
+    viewMapSection.style.display = 'none'
     
     mokepons.forEach ((mokepon) => {
        mokeponOptions = `
@@ -110,8 +124,10 @@ function startGame () {
 
 function selectPetPlayer () {
     
-    selectAttackPlayer.style.display = 'flex';    
-    alreadySelectPet.style.display = 'none';
+    // selectAttackPlayer.style.display = 'flex'
+    alreadySelectPet.style.display = 'none'
+    viewMapSection.style.display ='flex'
+    interval = setInterval (drawMokepon, 50)
 
     if (inputHipodoge.checked) {
         spanPetPlayer.innerHTML = `Mokepon: ${inputHipodoge.id}`;
@@ -165,14 +181,17 @@ function sequenceAttack () {
                 playerAttack.push ('FUEGO')
                 console.log (playerAttack)
                 button.style.background = '#112f58'
+                button.disabled = true
             } else if (e.target.textContent === ' 💧 ') {
                 playerAttack.push ('AGUA')
                 console.log (playerAttack)
                 button.style.background = '#112f58'
+                button.disabled = true
             } else {
                 playerAttack.push ('TIERRA')
                 console.log (playerAttack)
                 button.style.background = '#112f58'
+                button.disabled = true
             }
 
             randomEnemyAttack ()
@@ -184,7 +203,7 @@ function selectPetEnemy () {
     let randomPetEnemy = randomFunc (0, mokepons.length - 1);
 
     spanPetEnemy.innerHTML = `Mokepon: ${mokepons[randomPetEnemy].name}`
-    mokeponEnemyAttacks = mokepons [randomPetEnemy].attacks
+    mokeponEnemyAttacks = `ataques: ${mokepons[randomPetEnemy].attacks}`
     sequenceAttack ()
 }
 
@@ -245,7 +264,7 @@ function combatResults () {
         }
     }
 
-    // victories ();
+    victories ();
 }
 
 function victories () {
@@ -267,9 +286,6 @@ function createMessage (result) {
     let newEnemyAttack = document.createElement ('p');
     newEnemyAttack.innerHTML = indexEnemyAttack;
 
-    // let paragraph = document.createElement ('p');
-    // paragraph.innerHTML = `Tu mascota atacó con ${playerAttack}, tu enemigo con ${enemyAttack} - ${result}`;
-
     playerAttackMessage.appendChild (newPlayerAttack);
     enemyAttackMessage.appendChild (newEnemyAttack);
 }
@@ -278,10 +294,6 @@ function createFinalMessage (finalResult) {
     restartSection.style.display = 'flex';
 
     sectionMessage.innerHTML = finalResult;
-
-    fireButton.disabled = true;
-    waterButton.disabled = true;
-    earthButton.disabled = true;
 }
 
 function randomFunc (min, max) {
@@ -290,6 +302,49 @@ function randomFunc (min, max) {
 
 function restartGame () {
     location.reload ();
+}
+
+function drawMokepon () {
+    capipepo.x = capipepo.x + capipepo.speedX
+    capipepo.y = capipepo.y + capipepo.speedY
+    canvas.clearRect (0, 0, mapa.width, mapa.height)
+
+    canvas.drawImage (
+        capipepo.mapaImage,
+        capipepo.x,
+        capipepo.y,
+        capipepo.width,
+        capipepo.height
+    )
+}
+
+function moveMokeponRight () {
+    capipepo.speedX = 5
+
+    drawMokepon ()
+}
+
+function moveMokeponLeft () {
+    capipepo.speedX = -5
+
+    drawMokepon ()
+}
+
+function moveMokeponDown () {
+    capipepo.speedY = 5
+
+    drawMokepon ()
+}
+
+function moveMokeponUp () {
+    capipepo.speedY = -5
+
+    drawMokepon ()
+}
+
+function stopMove () {
+    capipepo.speedX = 0
+    capipepo.speedY = 0
 }
 
 window.addEventListener ('load', startGame)
