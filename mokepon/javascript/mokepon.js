@@ -50,6 +50,8 @@ let enemyVictories = 0
 // let enemyLifes = 3
 let canvas = mapa.getContext ('2d')
 let interval
+let mapBackground = new Image ()
+mapBackground.src = '../assets/mokemap.png'
 
 class Mokepon {
     constructor (name, image, life) {
@@ -59,8 +61,8 @@ class Mokepon {
         this.attacks = []
         this.x = 20
         this.y = 30
-        this.width = 80
-        this.height = 80
+        this.width = 30
+        this.height = 30
         this.mapaImage = new Image()
         this.mapaImage.src = image
         this.speedX = 0
@@ -127,7 +129,8 @@ function selectPetPlayer () {
     // selectAttackPlayer.style.display = 'flex'
     alreadySelectPet.style.display = 'none'
     viewMapSection.style.display ='flex'
-    interval = setInterval (drawMokepon, 50)
+
+    startMap ()
 
     if (inputHipodoge.checked) {
         spanPetPlayer.innerHTML = `Mokepon: ${inputHipodoge.id}`;
@@ -304,11 +307,17 @@ function restartGame () {
     location.reload ();
 }
 
-function drawMokepon () {
+function drawCanvas () {
     capipepo.x = capipepo.x + capipepo.speedX
     capipepo.y = capipepo.y + capipepo.speedY
     canvas.clearRect (0, 0, mapa.width, mapa.height)
-
+    canvas.drawImage (
+        mapBackground,
+        0,
+        0,
+        mapa.width,
+        mapa.height
+    )
     canvas.drawImage (
         capipepo.mapaImage,
         capipepo.x,
@@ -321,30 +330,58 @@ function drawMokepon () {
 function moveMokeponRight () {
     capipepo.speedX = 5
 
-    drawMokepon ()
+    drawCanvas ()
 }
 
 function moveMokeponLeft () {
     capipepo.speedX = -5
 
-    drawMokepon ()
+    drawCanvas ()
 }
 
 function moveMokeponDown () {
     capipepo.speedY = 5
 
-    drawMokepon ()
+    drawCanvas ()
 }
 
 function moveMokeponUp () {
     capipepo.speedY = -5
 
-    drawMokepon ()
+    drawCanvas ()
 }
 
 function stopMove () {
     capipepo.speedX = 0
     capipepo.speedY = 0
+}
+
+function keyTap (event) {
+    switch (event.key) {
+        case 'ArrowUp':
+            moveMokeponUp ()
+            break;
+        case 'ArrowDown':
+            moveMokeponDown ()
+            break;
+        case 'ArrowLeft':
+            moveMokeponLeft ()
+            break;
+        case 'ArrowRight':
+            moveMokeponRight ()
+            break;    
+        default:
+            break;
+    }
+}
+
+function startMap () {
+    mapa.width = 320
+    mapa.height = 240
+    interval = setInterval (drawCanvas, 50)
+
+    window.addEventListener ('keydown', keyTap)
+    window.addEventListener ('keyup', stopMove)
 }
 
 window.addEventListener ('load', startGame)
