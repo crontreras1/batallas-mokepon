@@ -36,6 +36,7 @@ let inputHipodoge
 let inputCapipepo 
 let inputRatigueya 
 let petPlayer
+let petPlayerObject
 let mokeponAttacks
 let mokeponEnemyAttacks
 let fireButton 
@@ -51,28 +52,42 @@ let enemyVictories = 0
 let canvas = mapa.getContext ('2d')
 let interval
 let mapBackground = new Image ()
-mapBackground.src = '../assets/mokemap.png'
+mapBackground.src = './assets/mokemap.png'
 
 class Mokepon {
-    constructor (name, image, life) {
+    constructor (name, image, life, imageMap, x = 10, y = 10 ) {
         this.name = name
-        this.image = image
+        this.image = imageMap
         this.life = life
         this.attacks = []
-        this.x = 20
-        this.y = 30
+        this.x = x
+        this.y = y
         this.width = 30
         this.height = 30
-        this.mapaImage = new Image()
+        this.mapaImage = new Image ()
         this.mapaImage.src = image
         this.speedX = 0
         this.speedY = 0
     }
+
+    paintMokepon () {
+        canvas.drawImage (
+            this.mapaImage,
+            this.x,
+            this.y,
+            this.width,
+            this.height 
+        )
+    }
 }
 
-let hipodoge = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5)
-let capipepo = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5)
-let ratigueya = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5)
+let hipodoge = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5, './assets/hipodoge.png')
+let capipepo = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5, './assets/capipepo.png')
+let ratigueya = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5,'./assets/ratigueya.png' )
+
+let hipodogeEnemy = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5, './assets/hipodoge.png', 80, 170)
+let capipepoEnemy = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5, './assets/capipepo.png', 150, 95)
+let ratigueyaEnemy = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5,'./assets/ratigueya.png', 200, 190 )
 
 hipodoge.attacks.push (
     {name: '💧', id: 'water-button'},
@@ -130,8 +145,6 @@ function selectPetPlayer () {
     alreadySelectPet.style.display = 'none'
     viewMapSection.style.display ='flex'
 
-    startMap ()
-
     if (inputHipodoge.checked) {
         spanPetPlayer.innerHTML = `Mokepon: ${inputHipodoge.id}`;
         petPlayer = inputHipodoge.id
@@ -145,8 +158,9 @@ function selectPetPlayer () {
         alert ('Primero tienes que seleccionar una mascota');
         restartGame ();
     }
-
+    
     extractAttacks (petPlayer)
+    startMap ()
     selectPetEnemy ()
 }
 
@@ -308,8 +322,8 @@ function restartGame () {
 }
 
 function drawCanvas () {
-    capipepo.x = capipepo.x + capipepo.speedX
-    capipepo.y = capipepo.y + capipepo.speedY
+    petPlayerObject.x = petPlayerObject.x + petPlayerObject.speedX
+    petPlayerObject.y = petPlayerObject.y + petPlayerObject.speedY
     canvas.clearRect (0, 0, mapa.width, mapa.height)
     canvas.drawImage (
         mapBackground,
@@ -318,42 +332,32 @@ function drawCanvas () {
         mapa.width,
         mapa.height
     )
-    canvas.drawImage (
-        capipepo.mapaImage,
-        capipepo.x,
-        capipepo.y,
-        capipepo.width,
-        capipepo.height
-    )
+
+    petPlayerObject.paintMokepon ()
+    hipodogeEnemy.paintMokepon ()
+    capipepoEnemy.paintMokepon ()
+    ratigueyaEnemy.paintMokepon ()
 }
 
 function moveMokeponRight () {
-    capipepo.speedX = 5
-
-    drawCanvas ()
+    petPlayerObject.speedX = 5
 }
 
 function moveMokeponLeft () {
-    capipepo.speedX = -5
-
-    drawCanvas ()
+    petPlayerObject.speedX = -5
 }
 
 function moveMokeponDown () {
-    capipepo.speedY = 5
-
-    drawCanvas ()
+    petPlayerObject.speedY = 5
 }
 
 function moveMokeponUp () {
-    capipepo.speedY = -5
-
-    drawCanvas ()
+    petPlayerObject.speedY = -5
 }
 
 function stopMove () {
-    capipepo.speedX = 0
-    capipepo.speedY = 0
+    petPlayerObject.speedX = 0
+    petPlayerObject.speedY = 0
 }
 
 function keyTap (event) {
@@ -378,10 +382,25 @@ function keyTap (event) {
 function startMap () {
     mapa.width = 320
     mapa.height = 240
+    petPlayerObject = getPetObject (petPlayer)
     interval = setInterval (drawCanvas, 50)
 
     window.addEventListener ('keydown', keyTap)
     window.addEventListener ('keyup', stopMove)
+}
+
+function getPetObject () {
+    for (let i = 0; i < mokepons.length; i++) {
+        if (petPlayer === mokepons[i].name) {
+            return mokepons[i]
+        }       
+    }
+}
+
+function reviewCollision () {
+    // if () {
+
+    // }
 }
 
 window.addEventListener ('load', startGame)
