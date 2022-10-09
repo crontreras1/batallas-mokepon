@@ -37,7 +37,7 @@ let inputCapipepo
 let inputRatigueya 
 let petPlayer
 let petPlayerObject
-let mokeponAttacks
+let mokeponAttacksmapBackground
 let mokeponEnemyAttacks
 let fireButton 
 let waterButton 
@@ -53,17 +53,29 @@ let canvas = mapa.getContext ('2d')
 let interval
 let mapBackground = new Image ()
 mapBackground.src = './assets/mokemap.png'
+let heightMap
+let widthMap = window.innerWidth - 20
+const maxWidthMap = 350 
+
+if (widthMap > maxWidthMap) {
+    widthMap = maxWidthMap - 20
+}
+
+heightMap = widthMap * 600 / 800
+
+mapa.width = widthMap
+mapa.height = heightMap
 
 class Mokepon {
-    constructor (name, image, life, imageMap, x = 10, y = 10 ) {
+    constructor (name, image, life, imageMap) {
         this.name = name
         this.image = imageMap
         this.life = life
         this.attacks = []
-        this.x = x
-        this.y = y
         this.width = 30
         this.height = 30
+        this.x = randomFunc (0, mapa.width - this.width)
+        this.y = randomFunc (0, mapa.height - this.height)
         this.mapaImage = new Image ()
         this.mapaImage.src = image
         this.speedX = 0
@@ -85,9 +97,9 @@ let hipodoge = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5, './a
 let capipepo = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5, './assets/capipepo.png')
 let ratigueya = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5,'./assets/ratigueya.png' )
 
-let hipodogeEnemy = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5, './assets/hipodoge.png', 80, 170)
-let capipepoEnemy = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5, './assets/capipepo.png', 150, 95)
-let ratigueyaEnemy = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5,'./assets/ratigueya.png', 200, 190 )
+let hipodogeEnemy = new Mokepon ('Hipodoge', './assets/mokepon-hipodoge.png', 5, './assets/hipodoge.png')
+let capipepoEnemy = new Mokepon ('Capipepo', './assets/mokepon-capipepo.png', 5, './assets/capipepo.png')
+let ratigueyaEnemy = new Mokepon ('Ratigueya', './assets/mokepon-ratigueya.png', 5,'./assets/ratigueya.png')
 
 hipodoge.attacks.push (
     {name: '💧', id: 'water-button'},
@@ -97,6 +109,14 @@ hipodoge.attacks.push (
     {name: '🌱', id: 'earth-button'},
 )
 
+// hipodogeEnemy.attacks.push (
+//     {name: '💧', id: 'water-button'},
+//     {name: '💧', id: 'water-button'},
+//     {name: '💧', id: 'water-button'},
+//     {name: '🔥', id: 'fire-button'},
+//     {name: '🌱', id: 'earth-button'},
+// )
+
 capipepo.attacks.push (
     {name: '🌱', id: 'earth-button'},
     {name: '🌱', id: 'earth-button'},
@@ -105,6 +125,14 @@ capipepo.attacks.push (
     {name: '🔥', id: 'fire-button'},
 )
 
+// capipepoEnemy.attacks.push (
+//     {name: '🌱', id: 'earth-button'},
+//     {name: '🌱', id: 'earth-button'},
+//     {name: '🌱', id: 'earth-button'},
+//     {name: '💧', id: 'water-button'},
+//     {name: '🔥', id: 'fire-button'},
+// )
+
 ratigueya.attacks.push (
     {name: '🔥', id: 'fire-button'},
     {name: '🔥', id: 'fire-button'},
@@ -112,6 +140,14 @@ ratigueya.attacks.push (
     {name: '🌱', id: 'earth-button'},
     {name: '💧', id: 'water-button'},
 )
+
+// ratigueyaEnemy.attacks.push (
+//     {name: '🔥', id: 'fire-button'},
+//     {name: '🔥', id: 'fire-button'},
+//     {name: '🔥', id: 'fire-button'},
+//     {name: '🌱', id: 'earth-button'},
+//     {name: '💧', id: 'water-button'},
+// )
 
 mokepons.push (hipodoge, capipepo, ratigueya)
 
@@ -140,8 +176,6 @@ function startGame () {
 }
 
 function selectPetPlayer () {
-    
-    // selectAttackPlayer.style.display = 'flex'
     alreadySelectPet.style.display = 'none'
     viewMapSection.style.display ='flex'
 
@@ -161,7 +195,6 @@ function selectPetPlayer () {
     
     extractAttacks (petPlayer)
     startMap ()
-    selectPetEnemy ()
 }
 
 function extractAttacks (petPlayer) {
@@ -216,23 +249,22 @@ function sequenceAttack () {
     })
 }
 
-function selectPetEnemy () {
-    let randomPetEnemy = randomFunc (0, mokepons.length - 1);
-
-    spanPetEnemy.innerHTML = `Mokepon: ${mokepons[randomPetEnemy].name}`
-    mokeponEnemyAttacks = `ataques: ${mokepons[randomPetEnemy].attacks}`
+function selectPetEnemy (enemy) {
+    spanPetEnemy.innerHTML = `Mokepon: ${enemy.name}`
+    mokeponEnemyAttacks = `ataques: ${enemy.attacks}`
     sequenceAttack ()
 }
 
 function randomEnemyAttack () {
+    console.log ('ataques enemigo ', mokeponEnemyAttacks)
     let randomPetEnemy = randomFunc (0, mokeponEnemyAttacks.length - 1);
 
     if (randomPetEnemy == 0 || randomPetEnemy == 1) {
-        enemyAttack.push = 'FUEGO';
+        enemyAttack.push ('FUEGO');
     } else if (randomPetEnemy == 3 || randomPetEnemy == 4) {
-        enemyAttack.push = 'AGUA';
+        enemyAttack.push ('AGUA');
     } else {
-        enemyAttack.push = 'TIERRA';
+        enemyAttack.push ('TIERRA');
     }
 
     console.log (enemyAttack)
@@ -258,17 +290,17 @@ function combatResults () {
             createMessage ('Empate')
             // playerVictories++
             // spanEnemyLife.innerHTML = `Victorias: ${enemyLifes}`;
-        } else if (playerAttack[index] == 'FUEGO 🔥' && enemyAttack[index]  == 'TIERRA 🌱') {
+        } else if (playerAttack[index] === 'FUEGO' && enemyAttack[index]  === 'TIERRA') {
             indexBothOponents (index, index)
             createMessage ('Ganaste, Maestro Mokepon');
             playerVictories++
             spanPlayerLife.innerHTML = `Victorias: ${playerVictories}`;
-        } else if (playerAttack[index] == 'AGUA 💧' && enemyAttack[index]  == 'FUEGO 🔥') {
+        } else if (playerAttack[index] === 'AGUA' && enemyAttack[index]  === 'FUEGO') {
             indexBothOponents (index, index)
             createMessage ('Ganaste, Maestro Mokepon');
             playerVictories++
             spanPlayerLife.innerHTML = `Victorias: ${playerVictories}`;
-        } else if (playerAttack[index] == 'TIERRA 🌱' && enemyAttack[index] == 'AGUA 💧')  {
+        } else if (playerAttack[index] === 'TIERRA' && enemyAttack[index] === 'AGUA')  {
             indexBothOponents (index, index)
             createMessage ('Ganaste, Maestro Mokepon');
             playerVictories++
@@ -292,6 +324,7 @@ function victories () {
     } else {
         createFinalMessage ('Buhhh, eres el gran perdedor')
     }
+    console.log (enemyVictories)
 }
 
 function createMessage (result) {
@@ -305,6 +338,7 @@ function createMessage (result) {
 
     playerAttackMessage.appendChild (newPlayerAttack);
     enemyAttackMessage.appendChild (newEnemyAttack);
+    console.log (enemyAttackMessage)
 }
 
 function createFinalMessage (finalResult) {
@@ -337,6 +371,12 @@ function drawCanvas () {
     hipodogeEnemy.paintMokepon ()
     capipepoEnemy.paintMokepon ()
     ratigueyaEnemy.paintMokepon ()
+
+    if (petPlayer.speedX !== 0 || petPlayer.speedY !== 0) {
+        reviewCollision (hipodogeEnemy)
+        reviewCollision (capipepoEnemy)
+        reviewCollision (ratigueyaEnemy)
+    }
 }
 
 function moveMokeponRight () {
@@ -380,8 +420,6 @@ function keyTap (event) {
 }
 
 function startMap () {
-    mapa.width = 320
-    mapa.height = 240
     petPlayerObject = getPetObject (petPlayer)
     interval = setInterval (drawCanvas, 50)
 
@@ -397,10 +435,31 @@ function getPetObject () {
     }
 }
 
-function reviewCollision () {
-    // if () {
+function reviewCollision (enemy) {
+    const topEnemy = enemy.y
+    const bottomEnemy = enemy.y + enemy.height
+    const rightEnemy = enemy.x + enemy.width
+    const leftEnemy = enemy.x
+    
+    const topPet = petPlayerObject.y
+    const bottomPet = petPlayerObject.y + petPlayerObject.height
+    const rightPet = petPlayerObject.x + petPlayerObject.width
+    const leftPet = petPlayerObject.x
 
-    // }
+    if (bottomPet < topEnemy  || 
+        topPet > bottomEnemy ||
+        rightPet < leftEnemy ||
+        leftPet > rightEnemy
+        ) {
+            return 
+    }
+
+    stopMove ()
+    console.log('Se detectó una colisión');
+    clearInterval (interval)
+    viewMapSection.style.display ='none'
+    selectAttackPlayer.style.display = 'flex'
+    selectPetEnemy (enemy)
 }
 
 window.addEventListener ('load', startGame)
